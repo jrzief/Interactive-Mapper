@@ -1,4 +1,4 @@
-// import { useState } from "react";
+import { useState } from "react";
 import { useQuery, gql } from "@apollo/client";
 import { useDebounce } from "use-debounce";
 import Layout from "src/components/layout";
@@ -44,14 +44,18 @@ const parseBounds = (boundsString: string) => {
 };
 
 export default function Home() {
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
   const [dataBounds, setDataBounds] = useLocalState<string>(
     "bounds",
-    "[[0,0],[0,0]"
+    // "[[0,0],[0,0]]"
+    "[[-74.77986,40.1367405],[-74.43567,40.42189]]"
   );
-
+  //const [debouncedDataBounds] = useDebounce(dataBounds, 200);
+ 
   const [debouncedDataBounds] = useDebounce(dataBounds, 200);
-  console.log(dataBounds);
-  console.log('debounced',debouncedDataBounds);
+  //const [debouncedDataBounds] = useDebounce(dataBounds, 200);
+  console.log('databounds', dataBounds);
+  console.log('debounced', debouncedDataBounds);
   console.log('parsed', parseBounds(debouncedDataBounds));
 
 
@@ -77,12 +81,16 @@ export default function Home() {
         <div
          className="w-1/2 pb-4" style={{maxheight: "calc(100vh - 64px)", overflowX: "scroll"}}
         >
-          <HouseList houses={lastData? lastData.houses : []} />
+          <HouseList
+           houses={lastData? lastData.houses : []}
+           setHighlightedId={setHighlightedId}
+          />
           {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
         </div>
         <div className="w-1/2">
           <Map setDataBounds={setDataBounds} 
               houses={lastData? lastData.houses : []}
+              highlightedId={highlightedId}
           />
         </div>
       </div>  
